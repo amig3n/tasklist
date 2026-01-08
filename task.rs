@@ -1,0 +1,33 @@
+use chrono::{DateTime, Utc};
+
+pub struct Task {
+    name: String,
+    completed: bool,
+    deadline: Option<DateTime<Utc>>
+}
+
+impl Task {
+    pub fn new(name: String, deadline: Option<DateTime<Utc>>) -> Task {
+        return Task{
+            name: name,
+            completed: false,
+            deadline: deadline
+        }
+    }
+    
+    pub fn show(&self) {
+        let parsedDeadline: String= match &self.deadline {
+            None => "No deadline".to_string(),
+            Some(d) => d.format("%Y-%m-%d %H:%M").to_string(),
+        };
+        let parsedStatus: String = match &self.completed {
+            true => "Completed".to_string(),
+            false => "Not completed".to_string(),
+        };
+        println!("{} | {} | {}", self.name, parsedDeadline, parsedStatus);
+    }
+    
+    pub fn finish(&mut self) {
+        self.completed = true;
+    }
+}
