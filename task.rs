@@ -16,15 +16,15 @@ impl Task {
     }
     
     pub fn show(&self) {
-        let parsedDeadline: String= match &self.deadline {
+        let parsed_deadline: String= match &self.deadline {
             None => "No deadline".to_string(),
             Some(d) => d.format("%Y-%m-%d %H:%M").to_string(),
         };
-        let parsedStatus: String = match &self.completed {
+        let parsed_status: String = match &self.completed {
             true => "Completed".to_string(),
             false => "Not completed".to_string(),
         };
-        println!("{} | {} | {}", self.name, parsedDeadline, parsedStatus);
+        println!("{} | {} | {}", self.name, parsed_deadline, parsed_status);
     }
     
     pub fn finish(&mut self) {
