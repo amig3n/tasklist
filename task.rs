@@ -16,7 +16,7 @@ impl Task {
     }
     
     pub fn show(&self) {
-        let parsed_deadline: String= match &self.deadline {
+        let parsed_deadline: String = match &self.deadline {
             None => "No deadline".to_string(),
             Some(d) => d.format("%Y-%m-%d %H:%M").to_string(),
         };

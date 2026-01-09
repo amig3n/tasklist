@@ -39,4 +39,13 @@ impl TaskList {
             task_index += 1;
         }
     }
+
+    pub fn delete(&mut self, task_index: usize) {
+        if task_index > 0 && task_index < self.tasks.len() {
+            self.tasks.remove(task_index);
+            println!("Task no {} deleted", task_index);
+        } else {
+            println!("Task no {} does not exists", task_index);
+        }
+    }
 }
