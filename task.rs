@@ -1,5 +1,7 @@
 use chrono::{DateTime, Utc};
+use serde::{Serialize,Deserialize};
 
+#[derive(Serialize,Deserialize)]
 pub struct Task {
     name: String,
     completed: bool,

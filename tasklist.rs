@@ -1,4 +1,5 @@
 use crate::task::Task;
+use std::fs;
 
 pub struct TaskList {
     tasks: Vec<Task>
@@ -11,6 +12,51 @@ impl TaskList {
             tasks: Vec::new(),
         }
     }
+
+    pub fn save(&mut self, path: &str) {
+        let parsed_json = serde_json::to_string_pretty(&self.tasks)
+            .expect("Failed to serialize tasks data");
+
+        fs::write(path, parsed_json)
+            .expect("Failed to save tasks file");
+    }
+            
+    pub fn load(path: &str) -> TaskList {
+        let raw_content;
+
+        match fs::read_to_string(path) {
+            Ok(data) => {
+                // capture the data
+                raw_content = data;
+            }
+
+            Err(_) => {
+                println!("Cannot load file tasklist file: {}", path);
+                // create blank tasklist if load failed
+                return TaskList::new();
+            }
+        }
+
+        // container for tasks
+        let tasks: Vec<Task>;
+
+        match serde_json::from_str(&raw_content) {
+            Ok(parsed_content) => {
+                // serialization went ok -> move parsed content to tasks
+                tasks = parsed_content;
+            }
+
+            Err(e) => {
+                println!("Unable to serialize task list: {}", e);
+                return TaskList::new();
+            }
+        }
+
+        return TaskList{
+            tasks: tasks,
+        }
+    }
+
 
     pub fn add(&mut self, task: Task){
         self.tasks.push(task);
@@ -48,4 +94,5 @@ impl TaskList {
             println!("Task no {} does not exists", task_index);
         }
     }
+
 }
