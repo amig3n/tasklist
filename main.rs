@@ -3,18 +3,20 @@ use chrono::Utc;
 mod task;
 use task::Task;
 
+mod tasklist;
+use tasklist::TaskList;
+
 fn main() {
 
-let mut deadlinedTask = Task::new("Finish this program".to_string(), Some(Utc::now()));
+    let mut task_list = TaskList::new();
 
-deadlinedTask.show();
+    let deadlinedTask = Task::new("Finish this program".to_string(), Some(Utc::now()));
+    task_list.add(deadlinedTask);
+    let notDeadlinedTask = Task::new("Test task without deadline".to_string(), None);
+    task_list.add(notDeadlinedTask);
 
-let mut notDeadlinedTask = Task::new("Test task without deadline".to_string(), None);
-notDeadlinedTask.show();
+    task_list.show();
+   
 
-deadlinedTask.finish();
-notDeadlinedTask.finish();
 
-deadlinedTask.show();
-notDeadlinedTask.show();
 }
