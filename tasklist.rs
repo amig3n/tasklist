@@ -77,8 +77,13 @@ impl TaskList {
 
     pub fn show(&self) {
         let mut task_index = 0;
+        
+        let tasks_list_length = self.tasks.len();
+        if tasks_list_length == 0 {
+            println!("No tasks to display");
+        }
 
-        while task_index < self.tasks.len() {
+        while task_index < tasks_list_length {
             let current_task = &self.tasks[task_index];
             print!("{} | ", task_index);
             current_task.show();
