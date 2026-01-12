@@ -25,5 +25,9 @@ pub enum Commands {
     Finish {
         index: usize,
     },
+    /// Delete task from database
+    Delete {
+        index: usize,
+    },
 }
 

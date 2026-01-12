@@ -31,7 +31,7 @@ fn main() {
                 Some(d) => match parse_deadline(&d) {
                     Ok(dt) => Some(dt),
                     Err(e) => {
-                        eprintln!("Invalid deadline {}: {}", d, e);
+                        eprintln!("Invalid deadline \"{}\": {}", d, e);
                         return;
                     }
                 },
@@ -46,6 +46,11 @@ fn main() {
 
         Commands::Finish { index } => {
             task_list.finish(index);
+            task_list.save(&path);
+        }
+
+        Commands::Delete { index } => {
+            task_list.delete(index);
             task_list.save(&path);
         }
     }
