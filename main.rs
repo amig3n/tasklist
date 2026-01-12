@@ -5,6 +5,9 @@ use task::Task;
 
 mod tasklist;
 use tasklist::TaskList;
+
+mod parse_date;
+use parse_date::parse_deadline;
  
 mod cli;
 use cli::{CLI, Commands};
@@ -22,8 +25,21 @@ fn main() {
         }
 
         Commands::Add {name,deadline} => {
+            // parse deadline if provided
+            
+            let prepared_deadline = match deadline {
+                Some(d) => match parse_deadline(&d) {
+                    Ok(dt) => Some(dt),
+                    Err(e) => {
+                        eprintln!("Invalid deadline {}: {}", d, e);
+                        return;
+                    }
+                },
+                None => None
+            };
+            
             task_list.add(
-                Task::new(name, None)
+                Task::new(name, prepared_deadline)
             );
             task_list.save(&path);
         }
