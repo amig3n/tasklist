@@ -1,5 +1,6 @@
 use crate::task::Task;
 use std::fs;
+use std::path::Path;
 
 pub struct TaskList {
     tasks: Vec<Task>
@@ -13,7 +14,8 @@ impl TaskList {
         }
     }
 
-    pub fn save(&mut self, path: &str) {
+    pub fn save(&mut self, path: &Path) {
+        // TODO rework error handling in this function
         let parsed_json = serde_json::to_string_pretty(&self.tasks)
             .expect("Failed to serialize tasks data");
 
@@ -21,7 +23,8 @@ impl TaskList {
             .expect("Failed to save tasks file");
     }
             
-    pub fn load(path: &str) -> TaskList {
+    // TODO: rewrite this function to use Result<TaskList, &str>
+    pub fn load(path: &Path) -> TaskList {
         let raw_content;
 
         match fs::read_to_string(path) {
@@ -30,8 +33,7 @@ impl TaskList {
                 raw_content = data;
             }
 
-            Err(_) => {
-                println!("Cannot load file tasklist file: {}", path);
+            Err(e) => {
                 // create blank tasklist if load failed
                 return TaskList::new();
             }
@@ -62,6 +64,7 @@ impl TaskList {
         self.tasks.push(task);
     }
 
+    // TODO: rewrite this function to use Result<>
     pub fn finish(&mut self, task_index: usize) {
         
         match self.tasks.get_mut(task_index) {
@@ -99,5 +102,7 @@ impl TaskList {
             println!("Task no {} does not exists", task_index);
         }
     }
+
+
 
 }

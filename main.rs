@@ -13,10 +13,22 @@ mod cli;
 use cli::{CLI, Commands};
 use clap::Parser;
 
+use std::env;
+use std::path::Path;
+
 fn main() {
     let cli = CLI::parse();
 
-    let path: &str = "/home/andrzej/tasklist.json";
+    // obtain path to tasklist file
+    let path = match env::home_dir() {
+        Some(path) => path.join("tasklist.json"),
+        None => {
+            eprintln!("Cannot determine home directory path");
+            return;
+        }
+    };
+
+    // TODO handle automatic creation of tasklist file if not present
     let mut task_list = TaskList::load(&path);
 
     match cli.command {
