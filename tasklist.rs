@@ -82,7 +82,7 @@ impl TaskList {
              }
         };
     }
-
+    // TODO return structured data for proper rendering
     pub fn show(&self) {
         let mut task_index = 0;
         
@@ -98,13 +98,12 @@ impl TaskList {
             task_index += 1;
         }
     }
-    // TODO: rewrite this use Result
-    pub fn delete(&mut self, task_index: usize) {
+    pub fn delete(&mut self, task_index: usize) -> Result<(), &str> {
         if task_index > 0 && task_index < self.tasks.len() {
             self.tasks.remove(task_index);
-            println!("Task no {} deleted", task_index);
+            return Ok(());
         } else {
-            println!("Task no {} does not exists", task_index);
+            return Err("invalid index number");
         }
     }
 

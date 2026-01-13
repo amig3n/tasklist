@@ -72,7 +72,7 @@ fn main() {
         }
 
         Commands::Finish { index } => {
-            task_list.finish(index).expect("Unable to finish the task: invalid index");
+            task_list.finish(index).expect("Unable to finish the task");
             match task_list.save(&path) {
                 Ok(_) => return,
                 Err(_) => {
@@ -83,7 +83,7 @@ fn main() {
         }
 
         Commands::Delete { index } => {
-            task_list.delete(index);
+            task_list.delete(index).expect("Unable to delete task");
             match task_list.save(&path) {
                 Ok(_) => return,
                 Err(_) => {
