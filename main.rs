@@ -16,14 +16,12 @@ use clap::Parser;
 use std::env;
 use std::path::Path;
 
-fn main() {
-
+fn run() -> Result<(), String> {
     // obtain path to tasklist file
     let path = match env::home_dir() {
         Some(path) => path.join("tasklist.json"),
         None => {
-            eprintln!("fatal: Cannot determine home directory path");
-            return;
+            return Err("Cannot determine home directory path".to_string());
         },
     };
 
@@ -31,9 +29,10 @@ fn main() {
     let mut task_list = match TaskList::load(&path) {
         Ok(tl) => tl,
         Err(_) => {
-            // create blank tasklist
+            // Non-fatal error -> if occurs, continue
             eprintln!("warning: Unable to load existing tasklist, creating a new one.");
             TaskList::new()
+            // TODO: make sure that this file will be saved, otherwise - circular problem
         }
     };
         
@@ -42,55 +41,51 @@ fn main() {
     match cli.command {
         Commands::List => {
             task_list.show();
+            Ok(())
         }
 
         Commands::Add {name,deadline} => {
             // parse deadline if provided
-            
-            let prepared_deadline = match deadline {
-                Some(d) => match parse_deadline(&d) {
-                    Ok(dt) => Some(dt),
-                    Err(e) => {
-                        eprintln!("Invalid deadline \"{}\": {}", d, e);
-                        return;
-                    }
+            match deadline {
+                Some(d) => { 
+                    task_list.add(
+                        Task::new(
+                            name, 
+                            Some(parse_deadline(&d)?)
+                        )
+                    );
                 },
-                None => None
+                None => {
+                    task_list.add(
+                        Task::new(name, None)
+                    );
+                },
             };
             
-            task_list.add(
-                Task::new(name, prepared_deadline)
-            );
-
-            match task_list.save(&path) {
-                Ok(_) => return,
-                Err(_) => {
-                    eprintln!("Unable to save the tasklist");
-                    return
-                }
-            }
+            task_list.save(&path)?;
+            Ok(())
         }
 
         Commands::Finish { index } => {
-            task_list.finish(index).expect("Unable to finish the task");
-            match task_list.save(&path) {
-                Ok(_) => return,
-                Err(_) => {
-                    eprintln!("Unable to save the tasklist");
-                    return
-                }
-            }
+            task_list.finish(index)?;
+            task_list.save(&path)?;
+            Ok(())
         }
 
         Commands::Delete { index } => {
-            task_list.delete(index).expect("Unable to delete task");
-            match task_list.save(&path) {
-                Ok(_) => return,
-                Err(_) => {
-                    eprintln!("Unable to save the tasklist");
-                    return
-                }
-            }
+            task_list.delete(index)?;
+            task_list.save(&path)?;
+            Ok(())
+        }
+    }
+}
+
+fn main() {
+    match run() {
+        Ok(()) => (),
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            return
         }
     }
 }
