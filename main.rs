@@ -72,7 +72,7 @@ fn main() {
         }
 
         Commands::Finish { index } => {
-            task_list.finish(index);
+            task_list.finish(index).expect("Unable to finish the task: invalid index");
             match task_list.save(&path) {
                 Ok(_) => return,
                 Err(_) => {

@@ -69,16 +69,16 @@ impl TaskList {
         self.tasks.push(task);
     }
 
-    // TODO: rewrite this function to use Result<>
-    pub fn finish(&mut self, task_index: usize) {
+    pub fn finish(&mut self, task_index: usize) -> Result<(), &str> {
         
         match self.tasks.get_mut(task_index) {
              Some(task) => {
                  task.finish();
+                 return Ok(());
              }
 
              None => { 
-                 println!("No task with index {} found", task_index+1);
+                 return Err("Task with received index not found");
              }
         };
     }
@@ -98,7 +98,7 @@ impl TaskList {
             task_index += 1;
         }
     }
-
+    // TODO: rewrite this use Result
     pub fn delete(&mut self, task_index: usize) {
         if task_index > 0 && task_index < self.tasks.len() {
             self.tasks.remove(task_index);
