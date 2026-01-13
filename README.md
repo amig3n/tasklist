@@ -12,12 +12,14 @@ Commands:
 It stores tasks in a local .json file in the home directory of current user.
 
 ## To implement
-- [x] CRUD
+- [x] CRD
 - [x] Persistance
-- [ ] Unit tests
-- [ ] Update task description
+- [ ] Update task
+-- Update description
+-- Update deadline
 - [ ] Mark multiple tasks as finished in one shot
 - [ ] Delete multiple tasks in one shot
 - [ ] More statuses
+- [ ] Unit tests
 - [ ] Subtasks
 - Something not yet defined
