@@ -14,17 +14,23 @@ impl TaskList {
         }
     }
 
-    pub fn save(&mut self, path: &Path) {
-        // TODO rework error handling in this function
-        let parsed_json = serde_json::to_string_pretty(&self.tasks)
-            .expect("Failed to serialize tasks data");
+    pub fn save(&mut self, path: &Path) -> Result<(), &str> {
+        let parsed_json = match serde_json::to_string_pretty(&self.tasks) {
+            Ok(json) => json,
+            Err(e) => {
+                return Err("Not able to serialize the json");
+            }
+        };
 
-        fs::write(path, parsed_json)
-            .expect("Failed to save tasks file");
+        match fs::write(path, parsed_json) {
+            Ok(_) => return Ok(()),
+            Err(e) => {
+                return Err("Writing tasklist file failed");
+            }
+        }
     }
             
-    // TODO: rewrite this function to use Result<TaskList, &str>
-    pub fn load(path: &Path) -> TaskList {
+    pub fn load(path: &Path) -> Result<TaskList, &str> {
         let raw_content;
 
         match fs::read_to_string(path) {
@@ -33,30 +39,29 @@ impl TaskList {
                 raw_content = data;
             }
 
-            Err(e) => {
-                // create blank tasklist if load failed
-                return TaskList::new();
+            Err(_) => {
+                return Err("Unable to open the tasklist file: {}");
             }
         }
 
         // container for tasks
         let tasks: Vec<Task>;
-
         match serde_json::from_str(&raw_content) {
             Ok(parsed_content) => {
                 // serialization went ok -> move parsed content to tasks
                 tasks = parsed_content;
             }
 
-            Err(e) => {
-                println!("Unable to serialize task list: {}", e);
-                return TaskList::new();
+            Err(_) => {
+                return Err("Unable to serialize task list");
             }
         }
 
-        return TaskList{
-            tasks: tasks,
-        }
+        return Ok(
+            TaskList{
+                tasks: tasks,
+            }
+        );
     }
 
 

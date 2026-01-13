@@ -17,20 +17,28 @@ use std::env;
 use std::path::Path;
 
 fn main() {
-    let cli = CLI::parse();
 
     // obtain path to tasklist file
     let path = match env::home_dir() {
         Some(path) => path.join("tasklist.json"),
         None => {
-            eprintln!("Cannot determine home directory path");
+            eprintln!("fatal: Cannot determine home directory path");
             return;
-        }
+        },
     };
 
     // TODO handle automatic creation of tasklist file if not present
-    let mut task_list = TaskList::load(&path);
-
+    let mut task_list = match TaskList::load(&path) {
+        Ok(tl) => tl,
+        Err(_) => {
+            // create blank tasklist
+            eprintln!("warning: Unable to load existing tasklist, creating a new one.");
+            TaskList::new()
+        }
+    };
+        
+    // handle CLI commands
+    let cli = CLI::parse();
     match cli.command {
         Commands::List => {
             task_list.show();
@@ -53,17 +61,36 @@ fn main() {
             task_list.add(
                 Task::new(name, prepared_deadline)
             );
-            task_list.save(&path);
+
+            match task_list.save(&path) {
+                Ok(_) => return,
+                Err(_) => {
+                    eprintln!("Unable to save the tasklist");
+                    return
+                }
+            }
         }
 
         Commands::Finish { index } => {
             task_list.finish(index);
-            task_list.save(&path);
+            match task_list.save(&path) {
+                Ok(_) => return,
+                Err(_) => {
+                    eprintln!("Unable to save the tasklist");
+                    return
+                }
+            }
         }
 
         Commands::Delete { index } => {
             task_list.delete(index);
-            task_list.save(&path);
+            match task_list.save(&path) {
+                Ok(_) => return,
+                Err(_) => {
+                    eprintln!("Unable to save the tasklist");
+                    return
+                }
+            }
         }
     }
 }
