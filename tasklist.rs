@@ -40,7 +40,7 @@ impl TaskList {
             }
 
             Err(_) => {
-                return Err("Unable to open the tasklist file: {}");
+                return Err("Unable to open the tasklist file");
             }
         }
 
@@ -53,7 +53,7 @@ impl TaskList {
             }
 
             Err(_) => {
-                return Err("Unable to serialize task list");
+                return Err("Unable to deserialize task list to JSON");
             }
         }
 
@@ -68,6 +68,8 @@ impl TaskList {
     pub fn add(&mut self, task: Task){
         self.tasks.push(task);
     }
+
+
 
     pub fn finish(&mut self, task_index: usize) -> Result<(), &str> {
         
@@ -103,7 +105,7 @@ impl TaskList {
             self.tasks.remove(task_index);
             return Ok(());
         } else {
-            return Err("invalid index number");
+            return Err("Invalid task index");
         }
     }
 
