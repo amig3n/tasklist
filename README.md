@@ -1,4 +1,4 @@
-(t)a(s)k (l)ist - simple cli-based tasklist for the sake of become Rustacean
+(t)a(s)k (l)ist - simple cli-based tasklist for the sake of becoming a Rustacean
 
 This project is for learning purposes. Written in Rust to practice the language basics
 
