@@ -72,6 +72,20 @@ fn run() -> Result<(), String> {
             Ok(())
         }
 
+        Commands::FinishMany { indices } => {
+            for index in indices {
+                match task_list.finish(index) {
+                    Ok(()) => (),
+                    Err(e) => {
+                        eprintln!("warning: Index {} -> {}", index, e);
+                        return Ok(continue)
+                    }
+                };
+            }
+            task_list.save(&path)?;
+            Ok(())
+        }
+
         Commands::Delete { index } => {
             task_list.delete(index)?;
             task_list.save(&path)?;
