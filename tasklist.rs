@@ -18,7 +18,7 @@ impl TaskList {
         let parsed_json = match serde_json::to_string_pretty(&self.tasks) {
             Ok(json) => json,
             Err(e) => {
-                return Err("Not able to serialize the json");
+                return Err("Unable to serialize tasklist");
             }
         };
 
@@ -48,12 +48,12 @@ impl TaskList {
         let tasks: Vec<Task>;
         match serde_json::from_str(&raw_content) {
             Ok(parsed_content) => {
-                // serialization went ok -> move parsed content to tasks
+                // deserialization went ok -> move parsed content to tasks
                 tasks = parsed_content;
             }
 
             Err(_) => {
-                return Err("Unable to deserialize task list to JSON");
+                return Err("Unable to deserialize task list");
             }
         }
 
@@ -69,8 +69,6 @@ impl TaskList {
         self.tasks.push(task);
     }
 
-
-
     pub fn finish(&mut self, task_index: usize) -> Result<(), &str> {
         
         match self.tasks.get_mut(task_index) {
@@ -84,7 +82,31 @@ impl TaskList {
              }
         };
     }
+
+    /// Get mutable reference for single task
+    pub fn get_single_task_mut(&mut self, task_index: usize) -> Result<&mut Task, &str> {
+        // check if given task exists inside tasklist
+        if task_index > 0 && task_index < self.tasks.len() {
+            // return reference to the task
+            return Ok(&mut self.tasks[task_index]);
+        } else {
+            return Err("Task does not exists");
+        }
+    }
+
+    /// Get non-mutable reference to a single task
+    pub fn get_single_task(&self, task_index: usize) -> Result<&Task, &str> {
+        // check if given task exists inside tasklist
+        if task_index > 0 && task_index < self.tasks.len() {
+            // return reference to the task
+            return Ok(&self.tasks[task_index]);
+        } else {
+            return Err("Task does not exists");
+        }
+    }
+
     // TODO return structured data for proper rendering
+    // TODO rewrite this func to use get_single_task inside for loop
     pub fn show(&self) {
         let mut task_index = 0;
         
@@ -100,6 +122,7 @@ impl TaskList {
             task_index += 1;
         }
     }
+
     pub fn delete(&mut self, task_index: usize) -> Result<(), &str> {
         if task_index > 0 && task_index < self.tasks.len() {
             self.tasks.remove(task_index);
@@ -109,6 +132,5 @@ impl TaskList {
         }
     }
 
-
-
 }
+
