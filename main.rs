@@ -13,40 +13,93 @@ mod cli;
 use cli::{CLI, Commands};
 use clap::Parser;
 
-fn main() {
+use std::env;
+use std::path::Path;
+
+fn run() -> Result<(), String> {
+    // obtain path to tasklist file
+    let path = match env::home_dir() {
+        Some(path) => path.join("tasklist.json"),
+        None => {
+            return Err("Cannot determine home directory path".to_string());
+        },
+    };
+
+    // TODO handle automatic creation of tasklist file if not present
+    let mut task_list = match TaskList::load(&path) {
+        Ok(tl) => tl,
+        Err(_) => {
+            // Non-fatal error -> if occurs, continue
+            eprintln!("warning: Unable to load existing tasklist, creating a new one.");
+            TaskList::new()
+            // TODO: make sure that this file will be saved, otherwise - circular problem
+        }
+    };
+        
+    // handle CLI commands
     let cli = CLI::parse();
-
-    let path: &str = "/home/andrzej/tasklist.json";
-    let mut task_list = TaskList::load(&path);
-
     match cli.command {
         Commands::List => {
             task_list.show();
+            Ok(())
         }
 
         Commands::Add {name,deadline} => {
             // parse deadline if provided
-            
-            let prepared_deadline = match deadline {
-                Some(d) => match parse_deadline(&d) {
-                    Ok(dt) => Some(dt),
-                    Err(e) => {
-                        eprintln!("Invalid deadline {}: {}", d, e);
-                        return;
-                    }
+            match deadline {
+                Some(d) => { 
+                    task_list.add(
+                        Task::new(
+                            name, 
+                            Some(parse_deadline(&d)?)
+                        )
+                    );
                 },
-                None => None
+                None => {
+                    task_list.add(
+                        Task::new(name, None)
+                    );
+                },
             };
             
-            task_list.add(
-                Task::new(name, prepared_deadline)
-            );
-            task_list.save(&path);
+            task_list.save(&path)?;
+            Ok(())
         }
 
         Commands::Finish { index } => {
-            task_list.finish(index);
-            task_list.save(&path);
+            task_list.finish(index)?;
+            task_list.save(&path)?;
+            Ok(())
+        }
+
+        Commands::FinishMany { indices } => {
+            for index in indices {
+                match task_list.finish(index) {
+                    Ok(()) => (),
+                    Err(e) => {
+                        eprintln!("warning: Index {} -> {}", index, e);
+                        return Ok(continue)
+                    }
+                };
+            }
+            task_list.save(&path)?;
+            Ok(())
+        }
+
+        Commands::Delete { index } => {
+            task_list.delete(index)?;
+            task_list.save(&path)?;
+            Ok(())
+        }
+    }
+}
+
+fn main() {
+    match run() {
+        Ok(()) => (),
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            return
         }
     }
 }

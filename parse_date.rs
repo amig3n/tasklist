@@ -16,15 +16,21 @@ pub fn parse_deadline(deadline_str: &str) -> Result<DateTime<Utc>,&str> {
     let time_number_string = &deadline_str[..deadline_str.len()-1];
 
     // convert number_string to int
-    // TODO eliminate this unwraps here
-    let time_number: i64 = time_number_string.parse().unwrap();
+    let time_number: i64 = time_number_string
+        .parse()
+        .map_err(|_| "Invalid time valued provided. You should use integer value, e.g. 4d/12w etc.")?;
+
+    if time_number < 1 {
+        return Err("Time value cannot be less than 1")
+    }
 
     let delta = match unit {
-        'd' => { TimeDelta::try_days(time_number).unwrap() }
-        'm' => { TimeDelta::try_days(time_number*MONTH_LENGTH).unwrap() }
-        'y' => { TimeDelta::try_days(time_number*YEAR_LENGTH).unwrap() }
-        'w' => { TimeDelta::try_weeks(time_number).unwrap() }
-        _ => { return Err("Not-recognized time unit") }
+        'h' => { TimeDelta::try_hours(time_number).ok_or("Invalid hours value")? }
+        'd' => { TimeDelta::try_days(time_number).ok_or("Invalid days value")? }
+        'w' => { TimeDelta::try_weeks(time_number).ok_or("Invalid weeks value")? }
+        'm' => { TimeDelta::try_days(time_number*MONTH_LENGTH).ok_or("Invalid months value")? }
+        'y' => { TimeDelta::try_days(time_number*YEAR_LENGTH).ok_or("Invalid years value")? }
+        _ => { return Err("Time unit not recognized") }
     };
     
     return Ok((current_time + delta).into());

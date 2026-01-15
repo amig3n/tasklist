@@ -25,5 +25,14 @@ pub enum Commands {
     Finish {
         index: usize,
     },
+    /// Mark multiple tasks as finished
+    FinishMany {
+        /// Indices of tasks to mark as finished
+        indices: Vec<usize>,
+    },
+    /// Delete task from database
+    Delete {
+        index: usize,
+    },
 }
 
