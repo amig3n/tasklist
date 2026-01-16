@@ -62,7 +62,7 @@ pub fn parse_deadline(deadline_str: &str) -> Result<DateTime<Utc>, DeadlineParse
         'w' => { TimeDelta::try_weeks(time_number).ok_or(DeadlineParseError::InvalidValue)? }
         'm' => { TimeDelta::try_days(time_number*MONTH_LENGTH).ok_or(DeadlineParseError::InvalidValue)? }
         'y' => { TimeDelta::try_days(time_number*YEAR_LENGTH).ok_or(DeadlineParseError::InvalidValue)? }
-        _ => { return Err(DeadlineParseError::GeneralError("Non-existing deadline unit".to_string())); }
+        _ => { return Err(DeadlineParseError::InvalidUnit); }
     };
     
     return Ok((current_time + delta).into());
