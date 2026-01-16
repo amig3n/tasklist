@@ -142,21 +142,15 @@ impl TaskList {
     }
 
     // TODO return structured data for proper rendering
-    // TODO rewrite this func to use get_single_task inside for loop
     /// List all tasks inside tasklist
     pub fn show(&self) {
-        let mut task_index = 0;
-        
-        let tasks_list_length = self.tasks.len();
-        if tasks_list_length == 0 {
+        if self.tasks.len() == 0 {
             println!("No tasks to display");
         }
 
-        while task_index < tasks_list_length {
-            let current_task = &self.tasks[task_index];
+        for (task_index,task) in self.tasks.iter().enumerate() {
             print!("{} | ", task_index);
-            current_task.show();
-            task_index += 1;
+            task.show();
         }
     }
 
