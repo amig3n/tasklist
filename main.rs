@@ -138,9 +138,7 @@ fn main() {
     match run() {
         Ok(()) => (),
         Err(e) => {
-            match e {
-                _ => eprintln!("Error: {}", e),
-            }
+            eprintln!("Error: {}", e);
         }
     }
 }
