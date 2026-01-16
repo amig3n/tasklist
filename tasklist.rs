@@ -42,6 +42,7 @@ impl From<TaskListError> for String {
 
 impl TaskList {
     /// Create new empty tasklist
+    #[allow(dead_code)]
     pub fn new() -> TaskList {
         return TaskList{
             tasks: Vec::new(),
@@ -135,9 +136,10 @@ impl TaskList {
     }
 
     /// Get mutable reference for single task
+    #[allow(dead_code)]
     pub fn get_single_task_mut(&mut self, task_index: usize) -> Result<&mut Task, TaskListError> {
         // check if given task exists inside tasklist
-        if task_index > 0 && task_index < self.tasks.len() {
+        if task_index < self.tasks.len() {
             // return reference to the task
             return Ok(&mut self.tasks[task_index]);
         } else {
@@ -146,9 +148,10 @@ impl TaskList {
     }
 
     /// Get non-mutable reference to a single task
+    #[allow(dead_code)]
     pub fn get_single_task(&self, task_index: usize) -> Result<&Task, TaskListError> {
         // check if given task exists inside tasklist
-        if task_index > 0 && task_index < self.tasks.len() {
+        if task_index < self.tasks.len() {
             // return reference to the task
             return Ok(&self.tasks[task_index]);
         } else {
