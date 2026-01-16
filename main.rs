@@ -1,5 +1,3 @@
-use chrono::Utc;
-
 mod task;
 use task::Task;
 
@@ -13,10 +11,7 @@ mod cli;
 use cli::{CLI, Commands};
 use clap::Parser;
 
-use std::env;
-use std::path::Path;
-
-use std::fmt;
+use std::{env,fmt};
 
 #[derive(Debug)]
 pub enum AppError {
@@ -112,16 +107,7 @@ fn run() -> Result<(), AppError> {
         }
 
         Commands::FinishMany { indices } => {
-            // FIXME move this to tasklist module
-            for index in indices {
-                match task_list.finish(index) {
-                    Ok(()) => (),
-                    Err(e) => {
-                        eprintln!("warning: Index {} -> {}", index, e);
-                        return Ok(continue)
-                    }
-                };
-            }
+            task_list.finish_many(indices)?;
             task_list.save(&path)?;
             Ok(())
         }

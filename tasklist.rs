@@ -52,14 +52,14 @@ impl TaskList {
     pub fn save(&mut self, path: &Path) -> Result<(), TaskListError> {
         let parsed_json = match serde_json::to_string_pretty(&self.tasks) {
             Ok(json) => json,
-            Err(e) => {
+            Err(_) => {
                 return Err(TaskListError::SerializationError);
             }
         };
 
         match fs::write(path, parsed_json) {
             Ok(_) => return Ok(()),
-            Err(e) => {
+            Err(_) => {
                 return Err(TaskListError::SaveError);
             }
         }
@@ -117,6 +117,21 @@ impl TaskList {
                  return Err(TaskListError::TaskNotFound);
              }
         };
+    }
+
+    /// Finish multiple tasks
+    pub fn finish_many(&mut self, task_indices: Vec<usize>) -> Result<(), TaskListError> {
+        for task_index in task_indices {
+            if task_index < self.tasks.len(){
+                self.tasks[task_index].finish();
+            } else {
+                // if task index cannot exists - skip it.
+                eprintln!("Warning: Task no. {} skipped -> invalid index", task_index);
+                continue;
+            }
+        }
+        Ok(())
+
     }
 
     /// Get mutable reference for single task
