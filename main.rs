@@ -63,12 +63,27 @@ fn run() -> Result<(), AppError> {
     };
 
     // TODO handle automatic creation of tasklist file if not present
+    let mut first_time_run = false;
     let mut task_list = match TaskList::load(&path) {
         Ok(tl) => tl,
         Err(e) => {
-            return Err(AppError::TasklistError(e));
+            match e {
+                tasklist::TaskListError::LoadError => {
+                    // create new empty tasklist if file not found
+                    first_time_run = true;
+                    TaskList::new()
+                },
+                _ => {
+                    return Err(AppError::from(e));
+                }
+            }
         }
     };
+
+    if first_time_run {
+        task_list.save(&path)?;
+        eprintln!("Created new tasklist at {}", path.display());
+    }
         
     // handle CLI commands
     let cli = CLI::parse();
