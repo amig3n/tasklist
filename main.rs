@@ -29,10 +29,7 @@ fn run() -> Result<(), String> {
     let mut task_list = match TaskList::load(&path) {
         Ok(tl) => tl,
         Err(_) => {
-            // Non-fatal error -> if occurs, continue
-            eprintln!("warning: Unable to load existing tasklist, creating a new one.");
-            TaskList::new()
-            // TODO: make sure that this file will be saved, otherwise - circular problem
+            return Err("Unable to load tasklist file".to_string())?;
         }
     };
         
