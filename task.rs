@@ -26,6 +26,7 @@ impl Task {
             true => "Completed".to_string(),
             false => "Not completed".to_string(),
         };
+        // FIXME: return structurized data for proper rendering
         println!("{} | {} | {}", self.name, parsed_deadline, parsed_status);
     }
     
