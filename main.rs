@@ -16,20 +16,62 @@ use clap::Parser;
 use std::env;
 use std::path::Path;
 
-fn run() -> Result<(), String> {
+use std::fmt;
+
+#[derive(Debug)]
+pub enum AppError {
+    TasklistError(tasklist::TaskListError),
+    HomedirError,
+    ParseDeadlineError(parse_date::DeadlineParseError),
+    GeneralError(String),
+
+}
+
+impl fmt::Display for AppError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            AppError::TasklistError(e) => write!(f, "Tasklist error: {}", e),
+            AppError::GeneralError(msg) => write!(f, "General application error: {}", msg),
+            AppError::HomedirError => write!(f, "Could not determine home directory"),
+            AppError::ParseDeadlineError(e) => write!(f, "Deadline parse error: {}", e),
+        }
+    }
+}
+
+impl std::error::Error for AppError {}
+
+impl From<tasklist::TaskListError> for AppError {
+    fn from(err: tasklist::TaskListError) -> Self {
+        AppError::TasklistError(err)
+    }
+}
+
+impl From<parse_date::DeadlineParseError> for AppError {
+    fn from(err: parse_date::DeadlineParseError) -> Self {
+        AppError::ParseDeadlineError(err)
+    }
+}
+
+impl From<env::VarError> for AppError {
+    fn from(_: env::VarError) -> Self {
+        AppError::HomedirError
+    }
+}
+
+fn run() -> Result<(), AppError> {
     // obtain path to tasklist file
     let path = match env::home_dir() {
         Some(path) => path.join("tasklist.json"),
         None => {
-            return Err("Cannot determine home directory path".to_string());
+            return Err(AppError::HomedirError);
         },
     };
 
     // TODO handle automatic creation of tasklist file if not present
     let mut task_list = match TaskList::load(&path) {
         Ok(tl) => tl,
-        Err(_) => {
-            return Err("Unable to load tasklist file".to_string())?;
+        Err(e) => {
+            return Err(AppError::TasklistError(e))?;
         }
     };
         
@@ -70,6 +112,7 @@ fn run() -> Result<(), String> {
         }
 
         Commands::FinishMany { indices } => {
+            // FIXME move this to tasklist module
             for index in indices {
                 match task_list.finish(index) {
                     Ok(()) => (),
@@ -95,8 +138,9 @@ fn main() {
     match run() {
         Ok(()) => (),
         Err(e) => {
-            eprintln!("Error: {}", e);
-            return
+            match e {
+                _ => eprintln!("Error: {}", e),
+            }
         }
     }
 }
