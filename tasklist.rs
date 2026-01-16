@@ -128,7 +128,6 @@ impl TaskList {
             } else {
                 // if task index cannot exist - skip it.
                 eprintln!("Warning: Task no. {} skipped -> invalid index", task_index);
-                continue;
             }
         }
         Ok(())
