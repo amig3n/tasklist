@@ -71,7 +71,7 @@ fn run() -> Result<(), AppError> {
     let mut task_list = match TaskList::load(&path) {
         Ok(tl) => tl,
         Err(e) => {
-            return Err(AppError::TasklistError(e))?;
+            return Err(AppError::TasklistError(e));
         }
     };
         
