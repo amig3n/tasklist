@@ -171,7 +171,7 @@ impl TaskList {
 
     /// Delete task from tasklist
     pub fn delete(&mut self, task_index: usize) -> Result<(), TaskListError> {
-        if task_index > 0 && task_index < self.tasks.len() {
+        if task_index < self.tasks.len() {
             self.tasks.remove(task_index);
             return Ok(());
         } else {
