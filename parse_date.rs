@@ -53,7 +53,7 @@ pub fn parse_deadline(deadline_str: &str) -> Result<DateTime<Utc>, DeadlineParse
         .map_err(|_| DeadlineParseError::InvalidValue)?;
 
     if time_number < 1 {
-        return Err(DeadlineParseError::InvalidUnit);
+        return Err(DeadlineParseError::InvalidValue);
     }
 
     let delta = match unit {
