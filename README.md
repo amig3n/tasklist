@@ -15,12 +15,18 @@ It stores tasks in a local .json file in the home directory of current user.
 ## To implement
 - [x] CRD
 - [x] Persistance
-- [ ] Update task
--- Update description
--- Update deadline
+- [x] Properly handle errors
 - [x] Mark multiple tasks as finished in one shot
+- [ ] Unit tests
+- [ ] Rendering component
+-- [ ] Table rendering
+- [ ] Update task
+-- [ ] Update description
+-- [ ] Update deadline
 - [ ] Delete multiple tasks in one shot
 - [ ] More statuses
-- [ ] Unit tests
 - [ ] Subtasks
+-- [ ] Tree structure
+- [ ] task vault encryption?
+- [ ] multiple vaults support?
 - Something not yet defined
