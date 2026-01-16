@@ -126,7 +126,7 @@ impl TaskList {
             if task_index < self.tasks.len(){
                 self.tasks[task_index].finish();
             } else {
-                // if task index cannot exists - skip it.
+                // if task index cannot exist - skip it.
                 eprintln!("Warning: Task no. {} skipped -> invalid index", task_index);
                 continue;
             }
