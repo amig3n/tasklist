@@ -11,4 +11,4 @@ clap = { version = "4", features = ["derive"] }
 
 [[bin]]
 name = "tsl"
-path = "main.rs"
+path = "src/main.rs"
