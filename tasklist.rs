@@ -1,4 +1,4 @@
-use crate::task::Task;
+use crate::task::{Task, ParsedTask};
 use std::fs;
 use std::path::Path;
 use std::fmt;
@@ -179,6 +179,19 @@ impl TaskList {
         } else {
             return Err(TaskListError::TaskInvalidIndex);
         }
+    }
+}
+
+impl From<TaskList> for Vec<ParsedTask>{
+    fn from(tl: TaskList) -> Vec<ParsedTask> {
+        let mut container: Vec<ParsedTask> = vec![];
+
+        // convert all tasks to ParsedTask
+        for task in tl.tasks {
+            container.push(task.into());
+        }
+
+        return container;
     }
 
 }
