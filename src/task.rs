@@ -89,3 +89,11 @@ impl From<Task> for ParsedTask {
         }
     }
 }
+
+
+impl From<ParsedTask> for Vec<String> {
+    fn from(pt: ParsedTask) -> Vec<String> {
+        return vec![pt.description, pt.deadline, pt.status];
+
+    }
+}
