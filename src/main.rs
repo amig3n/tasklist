@@ -112,9 +112,9 @@ fn run() -> Result<(), AppError> {
             let mut table = Table::new(
                 vec![
                     "ID".to_string(),
-                    "Description".to_string(), 
-                    "Deadline".to_string(), 
-                    "Status".to_string(),
+                    "DESCRIPTION".to_string(), 
+                    "DEADLINE".to_string(), 
+                    "STATUS".to_string(),
                 ], 
                 Some(table_format)
             );
