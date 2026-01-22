@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde::{Serialize,Deserialize};
+use colored::*;
 
 // Data model
 #[derive(Serialize,Deserialize)]
@@ -56,15 +57,15 @@ impl Task {
 // Convert task model to parsed task view
 impl From<Task> for ParsedTask {
     fn from(task: Task) -> ParsedTask {
-        let parsed_deadline = match task.deadline {
-            None => String::from("No deadline"),
+        let parsed_deadline = match &task.deadline {
+            None => String::from("No deadline").cyan().to_string(),
             Some(d) => d.format("%Y-%m-%d %H:%M").to_string(),
         };
 
         let parsed_status = match task.status() {
-            TaskStatus::Completed => String::from("Completed"),
-            TaskStatus::Pending   => String::from("Pending"),
-            TaskStatus::Overdue   => String::from("Overdue"),
+            TaskStatus::Completed => String::from("Completed").green().to_string(),
+            TaskStatus::Pending   => String::from("Pending").yellow().to_string(),
+            TaskStatus::Overdue   => String::from("Overdue").red().to_string(),
         };
 
         ParsedTask {

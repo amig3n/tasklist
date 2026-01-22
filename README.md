@@ -20,6 +20,7 @@ It stores tasks in a local .json file in the home directory of current user.
 - [ ] Unit tests
 - [x] Rendering component
 -- [x] Table rendering
+-- [x] Colored output
 - [ ] Update task
 -- [ ] Update description
 -- [ ] Update deadline

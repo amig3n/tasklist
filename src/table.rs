@@ -1,6 +1,7 @@
 use std::io;
 use std::io::Write;
 use std::fmt;
+use console;
 
 pub struct Table {
     format: Vec<TableColumnFormat>,
@@ -61,6 +62,10 @@ impl Table {
         }
     }
 
+    fn calculate_text_length(field: &String) -> usize {
+        return console::measure_text_width(field.as_str());
+    }
+
     /// Calculate the width of each column
     fn calculate_width(&self) -> Vec<usize> {
         // init usize vector with zeros
@@ -69,8 +74,9 @@ impl Table {
         for row in &self.rows {
             for (index,field) in row.iter().enumerate() {
                 // if current field is longer than current column width, update it
-                if field.len() > column_width[index] {
-                    column_width[index] = field.len();
+                let length = Self::calculate_text_length(field);
+                if length > column_width[index] {
+                    column_width[index] = length;
                 }
             }    
         }
@@ -96,11 +102,15 @@ impl Table {
                     TableColumnFormat::ToLeft => {
                         // insert whitespaces after field
                         current_field.push_str(field.as_str());
-                        current_field.push_str(" ".repeat(column_width[index] - field.len()).as_str());
+                        current_field.push_str(
+                            " ".repeat(column_width[index] - Self::calculate_text_length(field)).as_str()
+                        );
                     },
                     TableColumnFormat::ToRight => {
                         // insert whitespaces before field and padding after
-                        current_field.push_str(" ".repeat(column_width[index] - field.len()).as_str());
+                        current_field.push_str(
+                            " ".repeat(column_width[index] - Self::calculate_text_length(field)).as_str()
+                        );
                         current_field.push_str(field.as_str());
                     }
                 }
@@ -118,7 +128,11 @@ impl Table {
            stdout.write_all(table_row.join(&separator).as_bytes())?;
            stdout.write_all(b"\n")?;
         }
+
+    
         stdout.flush()?;
         Ok(())
     }
+
+
 }
