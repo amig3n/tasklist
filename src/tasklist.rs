@@ -158,19 +158,6 @@ impl TaskList {
         }
     }
 
-    // TODO return structured data for proper rendering
-    /// List all tasks inside tasklist
-    pub fn show(&self) {
-        if self.tasks.len() == 0 {
-            println!("No tasks to display");
-        }
-
-        for (task_index,task) in self.tasks.iter().enumerate() {
-            print!("{} | ", task_index);
-            task.show();
-        }
-    }
-
     /// Delete task from tasklist
     pub fn delete(&mut self, task_index: usize) -> Result<(), TaskListError> {
         if task_index < self.tasks.len() {

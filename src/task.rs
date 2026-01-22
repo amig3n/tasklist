@@ -48,21 +48,6 @@ impl Task {
         }
     }
     
-    pub fn show(&self) {
-        let parsed_deadline: String = match &self.deadline {
-            None => "No deadline".to_string(),
-            Some(d) => d.format("%Y-%m-%d %H:%M").to_string(),
-        };
-
-        let parsed_status: String = match &self.status() {
-            TaskStatus::Completed => "Completed".to_string(),
-            TaskStatus::Pending => "Pending".to_string(),
-            TaskStatus::Overdue => "Overdue".to_string(),
-        };
-
-        println!("{} | {} | {}", self.description, parsed_deadline, parsed_status);
-    }
-    
     pub fn finish(&mut self) {
         self.completed = true;
     }
