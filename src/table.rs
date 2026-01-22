@@ -10,6 +10,7 @@ pub struct Table {
 #[derive(Debug)]
 pub enum TableError {
     IncorrectRowLength,
+    IOError(io::Error),
 }
 
 #[derive(Debug, Clone, Copy, Default)]
@@ -19,13 +20,11 @@ pub enum TableColumnFormat{
     ToRight,
 }
 
-//pub const DEFAULT_COLUMN_MARGIN: i32 = 2;
-
-
 impl fmt::Display for TableError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
            TableError::IncorrectRowLength => write!(f, "Incorrect row length: row length must be equal to header length"),
+           TableError::IOError(err) => write!(f, "IO Error: {}", err),
         }
     }
 }
@@ -33,12 +32,13 @@ impl fmt::Display for TableError {
 impl std::error::Error for TableError {}
 
 impl From<std::io::Error> for TableError {
-    fn from(_: std::io::Error) -> Self {
-        TableError::IncorrectRowLength
+    fn from(err: std::io::Error) -> Self {
+        TableError::IOError(err)
     }
 }
 
 impl Table {
+    /// Create new table object
     pub fn new(headers: Vec<String>, format: Option<Vec<TableColumnFormat>>) -> Table {
         let parsed_format = match &format {
             Some(f) => f,
@@ -51,7 +51,7 @@ impl Table {
         }
     }
 
-
+    /// Push new row to the table
     pub fn push(&mut self, row: Vec<String>) -> Result<(), TableError>  {
         if row.len() == self.rows[0].len() {
             self.rows.push(row);
@@ -81,6 +81,7 @@ impl Table {
     pub fn render(&self, column_padding: usize) -> Result<(), TableError> {
         // calculate each column width
         let column_width: Vec<usize> = self.calculate_width();
+        
         // container for ready table
         let mut ready_table: Vec<Vec<String>> = vec![];
 
@@ -95,15 +96,11 @@ impl Table {
                     TableColumnFormat::ToLeft => {
                         // insert whitespaces after field
                         current_field.push_str(field.as_str());
-                        for i in 0..(column_width[index] - field.len()) {
-                            current_field.push_str(" ");
-                        }
+                        current_field.push_str(" ".repeat(column_width[index] - field.len()).as_str());
                     },
                     TableColumnFormat::ToRight => {
                         // insert whitespaces before field and padding after
-                        for i in 0..(column_width[index] - field.len()) {
-                            current_field.push_str(" ");
-                        }
+                        current_field.push_str(" ".repeat(column_width[index] - field.len()).as_str());
                         current_field.push_str(field.as_str());
                     }
                 }
