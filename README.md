@@ -12,14 +12,14 @@ Commands:
 
 It stores tasks in a local .json file in the home directory of current user.
 
-## To implement
+## Implementation list
 - [x] CRD
 - [x] Persistance
 - [x] Properly handle errors
 - [x] Mark multiple tasks as finished in one shot
 - [ ] Unit tests
-- [ ] Rendering component
--- [ ] Table rendering
+- [x] Rendering component
+-- [x] Table rendering
 - [ ] Update task
 -- [ ] Update description
 -- [ ] Update deadline
@@ -27,6 +27,8 @@ It stores tasks in a local .json file in the home directory of current user.
 - [ ] More statuses
 - [ ] Subtasks
 -- [ ] Tree structure
-- [ ] task vault encryption?
+- [ ] Tasklist encryption?
+-- Symmetric encryption with password prompt
 - [ ] multiple vaults support?
+-- Using static configfile inside home dir?
 - Something not yet defined
