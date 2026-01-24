@@ -1,5 +1,5 @@
 mod task;
-use task::Task;
+use task::{Task, ParsedTask};
 
 mod tasklist;
 use tasklist::TaskList;
@@ -13,12 +13,16 @@ use clap::Parser;
 
 use std::{env,fmt};
 
+mod table;
+use table::{Table,TableError};
+
 #[derive(Debug)]
 pub enum AppError {
     TasklistError(tasklist::TaskListError),
     HomedirError,
     ParseDeadlineError(parse_date::DeadlineParseError),
     GeneralError(String),
+    RenderError(table::TableError),
 
 }
 
@@ -29,6 +33,7 @@ impl fmt::Display for AppError {
             AppError::GeneralError(msg) => write!(f, "General application error: {}", msg),
             AppError::HomedirError => write!(f, "Could not determine home directory"),
             AppError::ParseDeadlineError(e) => write!(f, "Deadline parse error: {}", e),
+            AppError::RenderError(e) => write!(f, "Table rendering error: {}", e),
         }
     }
 }
@@ -50,6 +55,13 @@ impl From<parse_date::DeadlineParseError> for AppError {
 impl From<env::VarError> for AppError {
     fn from(_: env::VarError) -> Self {
         AppError::HomedirError
+    }
+}
+
+impl From<table::TableError> for AppError {
+
+    fn from(te: TableError) -> Self {
+        AppError::RenderError(te)
     }
 }
 
@@ -89,7 +101,36 @@ fn run() -> Result<(), AppError> {
     let cli = CLI::parse();
     match cli.command {
         Commands::List => {
-            task_list.show();
+            let parsed_tasklist: Vec<ParsedTask> = task_list.into();
+            let table_format = vec![
+                table::TableColumnFormat::ToRight,
+                table::TableColumnFormat::ToLeft,
+                table::TableColumnFormat::ToLeft,
+                table::TableColumnFormat::ToLeft,
+            ];
+
+            let mut table = Table::new(
+                vec![
+                    "ID".to_string(),
+                    "DESCRIPTION".to_string(), 
+                    "DEADLINE".to_string(), 
+                    "STATUS".to_string(),
+                ], 
+                Some(table_format)
+            );
+
+            for (index,task) in parsed_tasklist.iter().enumerate() {
+                let parsed_task: Vec<String> = vec![
+                    index.to_string(),
+                    task.description.clone(),
+                    task.deadline.clone(),
+                    task.status.clone(),
+                ];
+                table.push(parsed_task)?;
+            }
+
+            table.render(2)?;
+
             Ok(())
         }
 

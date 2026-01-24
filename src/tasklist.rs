@@ -1,4 +1,4 @@
-use crate::task::Task;
+use crate::task::{Task, ParsedTask};
 use std::fs;
 use std::path::Path;
 use std::fmt;
@@ -158,19 +158,6 @@ impl TaskList {
         }
     }
 
-    // TODO return structured data for proper rendering
-    /// List all tasks inside tasklist
-    pub fn show(&self) {
-        if self.tasks.len() == 0 {
-            println!("No tasks to display");
-        }
-
-        for (task_index,task) in self.tasks.iter().enumerate() {
-            print!("{} | ", task_index);
-            task.show();
-        }
-    }
-
     /// Delete task from tasklist
     pub fn delete(&mut self, task_index: usize) -> Result<(), TaskListError> {
         if task_index < self.tasks.len() {
@@ -179,6 +166,19 @@ impl TaskList {
         } else {
             return Err(TaskListError::TaskInvalidIndex);
         }
+    }
+}
+
+impl From<TaskList> for Vec<ParsedTask>{
+    fn from(tl: TaskList) -> Vec<ParsedTask> {
+        let mut container: Vec<ParsedTask> = vec![];
+
+        // convert all tasks to ParsedTask
+        for task in tl.tasks {
+            container.push(task.into());
+        }
+
+        return container;
     }
 
 }
