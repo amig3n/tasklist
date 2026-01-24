@@ -19,17 +19,17 @@ It stores tasks in a local .json file in the home directory of current user.
 - [x] Mark multiple tasks as finished in one shot
 - [ ] Unit tests
 - [x] Rendering component
--- [x] Table rendering
--- [x] Colored output
-- [ ] Update task
--- [ ] Update description
--- [ ] Update deadline
+- [x] Table rendering
+- [x] Colored output
+  - [ ] Update task
+  - [ ] Update description
+- [ ] Update deadline
 - [ ] Delete multiple tasks in one shot
 - [ ] More statuses
 - [ ] Subtasks
--- [ ] Tree structure
+- [ ] Tree structure
 - [ ] Tasklist encryption?
--- Symmetric encryption with password prompt
+    - Symmetric encryption with password prompt
 - [ ] multiple vaults support?
--- Using static configfile inside home dir?
-- Something not yet defined
+    - Using static configfile inside home dir?
+    - Something not yet defined
